@@ -33,15 +33,9 @@ class Producto {
 				path.join(__dirname, `../db/${this.name}`),
 				"utf-8"
 			);
-			const result = JSON.parse(data);
-
-			if (result.length === 0) {
-				return '{error: "No hay productos cargados."}';
-			}
-
-			const payload = result.filter((item) => item.id === id);
-			const response = payload[0] !== undefined ? payload : null;
-			return response;
+			const dataJson = JSON.parse(data);
+			const result = await dataJson.find((item) => item.id === id);
+			return result;
 		} catch (err) {
 			return logger.info("[]");
 		}

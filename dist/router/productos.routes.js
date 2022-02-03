@@ -42,20 +42,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var productRouter = (0, express_1.Router)();
 var productos_1 = __importDefault(require("../controller/productos"));
-var dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-var isAdmin = process.env.ADMIN || "true";
-function authMiddleware(request, response, next) {
-    if (isAdmin === "false") {
-        response
-            .status(403)
-            .send("{error : -1 description:'".concat(request.path, "' method '").concat(request.method, "' ACCESS_DENIED }"));
-        throw Error;
-    }
-    next();
-}
+var authHandler_1 = require("../middleware/authHandler");
+// function authMiddleware(request: Request, response: Response, next) {
+// 	if (isAdmin === "false") {
+// 		response
+// 			.status(403)
+// 			.send(
+// 				`{error : -1 description:'${request.path}' method '${request.method}' ACCESS_DENIED }`
+// 			);
+// 		throw Error;
+// 	}
+// 	next();
+// }
 var producto = new productos_1.default("productos.txt");
-productRouter.get("/listar", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+productRouter.get("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var result, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -76,7 +76,7 @@ productRouter.get("/listar", function (req, res) { return __awaiter(void 0, void
         }
     });
 }); });
-productRouter.post("/agregar", authMiddleware, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+productRouter.post("/", authHandler_1.authMiddleware, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, title, price, thumbnail, result, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -98,7 +98,7 @@ productRouter.post("/agregar", authMiddleware, function (req, res) { return __aw
         }
     });
 }); });
-productRouter.put("/actualizar/:id", authMiddleware, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+productRouter.put("/:id", authHandler_1.authMiddleware, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, title, price, thumbnail, id, payload, error_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -123,14 +123,14 @@ productRouter.put("/actualizar/:id", authMiddleware, function (req, res) { retur
         }
     });
 }); });
-productRouter.delete("/borrar/:id", authMiddleware, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+productRouter.delete("/:id", authHandler_1.authMiddleware, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, payload;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, req.params.id];
             case 1:
                 id = _a.sent();
-                return [4 /*yield*/, producto.eliminarProducto(id)];
+                return [4 /*yield*/, producto.eliminarProducto(parseInt(id, 10))];
             case 2:
                 payload = _a.sent();
                 res.send(payload);
@@ -138,7 +138,7 @@ productRouter.delete("/borrar/:id", authMiddleware, function (req, res) { return
         }
     });
 }); });
-productRouter.get("/listar/:id?", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+productRouter.get("/:id?", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, result, error_4;
     var _a;
     return __generator(this, function (_b) {
@@ -146,7 +146,7 @@ productRouter.get("/listar/:id?", function (req, res) { return __awaiter(void 0,
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 id = (_a = req.params.id) !== null && _a !== void 0 ? _a : "0";
-                return [4 /*yield*/, producto.mostrarProducto(id)];
+                return [4 /*yield*/, producto.mostrarProducto(parseInt(id, 10))];
             case 1:
                 result = _b.sent();
                 result !== undefined

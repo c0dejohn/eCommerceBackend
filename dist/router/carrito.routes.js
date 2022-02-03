@@ -43,36 +43,15 @@ var express_1 = require("express");
 var cartRouter = (0, express_1.Router)();
 var carrito_1 = __importDefault(require("../controller/carrito"));
 var producto = new carrito_1.default("carrito.txt");
-cartRouter.get("/listar", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, producto.listarProducto()];
-            case 1:
-                result = _a.sent();
-                result === undefined
-                    ? res.send({ error: "no hay productos cargados" })
-                    : res.send(result);
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                res.send(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-cartRouter.get("/listar/:id?", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, result, error_2;
+cartRouter.get("/:id/productos", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, result, error_1;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
-                id = (_a = req.params.id) !== null && _a !== void 0 ? _a : "0";
-                return [4 /*yield*/, producto.mostrarProducto(id)];
+                id = (_a = req.params.id) !== null && _a !== void 0 ? _a : 0;
+                return [4 /*yield*/, producto.mostrarProducto(parseInt(id, 10))];
             case 1:
                 result = _b.sent();
                 result !== undefined
@@ -80,15 +59,15 @@ cartRouter.get("/listar/:id?", function (req, res) { return __awaiter(void 0, vo
                     : res.send({ error: "producto no encontrado" });
                 return [3 /*break*/, 3];
             case 2:
-                error_2 = _b.sent();
-                res.send(error_2);
+                error_1 = _b.sent();
+                res.send(error_1);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
-cartRouter.post("/agregar", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, title, price, result, error_3;
+cartRouter.post("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, id, title, price, result, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -99,18 +78,43 @@ cartRouter.post("/agregar", function (req, res) { return __awaiter(void 0, void 
                 return [4 /*yield*/, producto.agregarProducto(id, title, price)];
             case 2:
                 result = _b.sent();
-                result !== undefined ? res.status(201).send(result) : res.send(null);
+                result !== undefined ? res.status(201).send(result) : res.send(result);
                 return [3 /*break*/, 4];
             case 3:
-                error_3 = _b.sent();
-                res.send(error_3);
+                error_2 = _b.sent();
+                res.send(error_2);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
-cartRouter.delete("/borrar/:id", function (req, res) {
+cartRouter.put("/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, title, price, thumbnail, id, payload, error_3;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, req.body];
+            case 1:
+                _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail;
+                return [4 /*yield*/, req.params.id];
+            case 2:
+                id = _b.sent();
+                return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, id)];
+            case 3:
+                payload = _b.sent();
+                res.send(payload);
+                return [3 /*break*/, 5];
+            case 4:
+                error_3 = _b.sent();
+                res.send(error_3);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+cartRouter.delete("/:id", function (req, res) {
     var id = req.params.id;
-    res.send(producto.eliminarProducto(id));
+    res.send(producto.eliminarProducto(parseInt(id, 10)));
 });
 exports.default = cartRouter;
