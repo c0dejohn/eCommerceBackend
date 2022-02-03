@@ -81,25 +81,23 @@ var Producto = /** @class */ (function () {
     };
     Producto.prototype.mostrarProducto = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, result, payload, response, err_2;
+            var data, dataJson, result, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _a.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, fs_1.default.promises.readFile(path_1.default.join(__dirname, "../db/".concat(this.name)), "utf-8")];
                     case 1:
                         data = _a.sent();
-                        result = JSON.parse(data);
-                        if (result.length === 0) {
-                            return [2 /*return*/, '{error: "No hay productos cargados."}'];
-                        }
-                        payload = result.filter(function (item) { return item.id === id; });
-                        response = payload[0] !== undefined ? payload : null;
-                        return [2 /*return*/, response];
+                        dataJson = JSON.parse(data);
+                        return [4 /*yield*/, dataJson.find(function (item) { return item.id === id; })];
                     case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
                         err_2 = _a.sent();
                         return [2 /*return*/, logger_1.logger.info("[]")];
-                    case 3: return [2 /*return*/];
+                    case 4: return [2 /*return*/];
                 }
             });
         });

@@ -1,1 +1,1 @@
-[{"price":"producto.title","thumbnail":"producto.price","id":1,"timestamp":1643337967279}]
+[{"price":"producto.title","thumbnail":"producto.price","id":1,"timestamp":1643924300418},{"price":"producto.title","thumbnail":"producto.price","id":2,"timestamp":1643924301466}]
