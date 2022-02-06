@@ -1,131 +1,62 @@
-import { logger } from "../util/logger";
-import fs from "fs";
-import path from "path";
+import Producto from "../services/productos";
+const producto = new Producto("productos.txt");
 
-class Producto {
-	name: string;
-
-	constructor(name: string) {
-		this.name = name;
-	}
-
-	async listarProducto() {
+class ProductoController {
+	getAll = async (req, res) => {
 		try {
-			const data = await fs.promises.readFile(
-				path.join(__dirname, `../db/${this.name}`),
-				"utf-8"
-			);
-
-			const result = JSON.parse(data);
-
-			if (result.length === 0) {
-				return '{error: "No hay productos cargados."}';
-			}
-			return result;
-		} catch (err) {
-			logger.info(err);
-		}
-	}
-
-	async mostrarProducto(id) {
-		try {
-			const data = await fs.promises.readFile(
-				path.join(__dirname, `../db/${this.name}`),
-				"utf-8"
-			);
-			const dataJson = JSON.parse(data);
-			const result = await dataJson.find((item) => item.id === id);
-			return result;
-		} catch (err) {
-			return logger.info("[]");
-		}
-	}
-	async agregarProducto(title, price, thumbnail) {
-		try {
-			const data = await fs.promises.readFile(
-				path.join(__dirname, `../db/${this.name}`),
-				"utf-8"
-			);
-			const result = JSON.parse(data);
-			const newData = [...result];
-			const payload = {
-				title,
-				price,
-				thumbnail,
-				id: result.length + 1,
-				timestamp: Date.now()
-			};
-			newData.push(payload);
-			await fs.promises.writeFile(
-				path.join(__dirname, `../db/${this.name}`),
-				JSON.stringify(newData)
-			);
-			return payload;
-		} catch (err) {
-			logger.info("[falla al guardar]", err);
-			await fs.promises.writeFile(`./static/${this.name}`, "[]");
-			return "archivo creado, vuelve a intentar\n";
-		}
-	}
-
-	async actualizarProducto(title, price, thumbnail, id) {
-		try {
-			const data = await fs.promises.readFile(
-				path.join(__dirname, `../db/${this.name}`),
-				"utf-8"
-			);
-			const result = JSON.parse(data);
-			const oldData = [...result];
-			const payload = {
-				title,
-				price,
-				thumbnail,
-				id,
-				timestamp: Date.now()
-			};
-
-			const indiceProd = oldData.findIndex((prod) => {
-				return prod.id === id;
-			});
-
-			oldData[indiceProd] = payload;
-
-			fs.promises.writeFile(
-				path.join(__dirname, `../db/${this.name}`),
-				JSON.stringify(oldData),
-				"utf-8"
-			);
-
-			return payload;
+			const result = await producto.listarProducto();
+			result === undefined
+				? res.send({ error: "no hay productos cargados" })
+				: res.send(result);
 		} catch (error) {
-			logger.info(error);
+			res.send(error);
 		}
-	}
+	};
 
-	async eliminarProducto(id) {
+	create = async (req, res) => {
 		try {
-			const data = await fs.promises.readFile(
-				path.join(__dirname, `../db/${this.name}`),
-				"utf-8"
-			);
-			const result = JSON.parse(data);
-			const oldData = [...result];
-			const indiceProd = oldData.findIndex((prod) => {
-				return prod.id === id;
-			});
-
-			oldData.splice(indiceProd, 1);
-			fs.promises.writeFile(
-				path.join(__dirname, `../db/${this.name}`),
-				JSON.stringify(oldData),
-				"utf-8"
-			);
-
-			return oldData;
-		} catch (err) {
-			return logger.info("[]");
+			const { title, price, thumbnail } = await req.body;
+			const result = await producto.agregarProducto(title, price, thumbnail);
+			result !== undefined ? res.status(201).send(result) : res.send(null);
+		} catch (error) {
+			res.send(error);
 		}
-	}
+	};
+
+	update = async (req, res) => {
+		try {
+			const { title, price, thumbnail } = await req.body;
+			const id = parseInt(req.params.id, 10);
+			const payload = await producto.actualizarProducto(
+				title,
+				price,
+				thumbnail,
+				id
+			);
+			res.send(payload);
+		} catch (error) {
+			res.send(error);
+		}
+	};
+
+	destroy = async (req, res) => {
+		const id = await req.params.id;
+		await producto.eliminarProducto(parseInt(id, 10));
+		res.sendStatus(204);
+	};
+
+	getById = async (req, res) => {
+		try {
+			const id = req.params.id ?? "0";
+			const result = await producto.mostrarProducto(parseInt(id, 10));
+
+			result !== undefined
+				? res.send(result)
+				: res.send({ error: "producto no encontrado" });
+		} catch (error) {
+			res.send(error);
+		}
+	};
 }
 
-export default Producto;
+export default ProductoController;

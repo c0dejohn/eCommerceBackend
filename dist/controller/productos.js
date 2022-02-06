@@ -35,169 +35,120 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger_1 = require("../util/logger");
-var fs_1 = __importDefault(require("fs"));
-var path_1 = __importDefault(require("path"));
-var Producto = /** @class */ (function () {
-    function Producto(name) {
-        this.name = name;
-    }
-    Producto.prototype.listarProducto = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, result, err_1;
+var productos_1 = __importDefault(require("../services/productos"));
+var producto = new productos_1.default("productos.txt");
+var ProductoController = /** @class */ (function () {
+    function ProductoController() {
+        var _this = this;
+        this.getAll = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var result, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, fs_1.default.promises.readFile(path_1.default.join(__dirname, "../db/".concat(this.name)), "utf-8")];
+                        return [4 /*yield*/, producto.listarProducto()];
                     case 1:
-                        data = _a.sent();
-                        result = JSON.parse(data);
-                        if (result.length === 0) {
-                            return [2 /*return*/, '{error: "No hay productos cargados."}'];
-                        }
-                        return [2 /*return*/, result];
+                        result = _a.sent();
+                        result === undefined
+                            ? res.send({ error: "no hay productos cargados" })
+                            : res.send(result);
+                        return [3 /*break*/, 3];
                     case 2:
-                        err_1 = _a.sent();
-                        logger_1.logger.info(err_1);
+                        error_1 = _a.sent();
+                        res.send(error_1);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
             });
-        });
-    };
-    Producto.prototype.mostrarProducto = function (id) {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, dataJson, result, err_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+        }); };
+        this.create = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var _a, title, price, thumbnail, result, error_2;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, fs_1.default.promises.readFile(path_1.default.join(__dirname, "../db/".concat(this.name)), "utf-8")];
+                        _b.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, req.body];
                     case 1:
-                        data = _a.sent();
-                        dataJson = JSON.parse(data);
-                        return [4 /*yield*/, dataJson.find(function (item) { return item.id === id; })];
+                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail;
+                        return [4 /*yield*/, producto.agregarProducto(title, price, thumbnail)];
                     case 2:
-                        result = _a.sent();
-                        return [2 /*return*/, result];
+                        result = _b.sent();
+                        result !== undefined ? res.status(201).send(result) : res.send(null);
+                        return [3 /*break*/, 4];
                     case 3:
-                        err_2 = _a.sent();
-                        return [2 /*return*/, logger_1.logger.info("[]")];
+                        error_2 = _b.sent();
+                        res.send(error_2);
+                        return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
             });
-        });
-    };
-    Producto.prototype.agregarProducto = function (title, price, thumbnail) {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, result, newData, payload, err_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+        }); };
+        this.update = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var _a, title, price, thumbnail, id, payload, error_3;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 5]);
-                        return [4 /*yield*/, fs_1.default.promises.readFile(path_1.default.join(__dirname, "../db/".concat(this.name)), "utf-8")];
+                        _b.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, req.body];
                     case 1:
-                        data = _a.sent();
-                        result = JSON.parse(data);
-                        newData = __spreadArray([], result, true);
-                        payload = {
-                            title: title,
-                            price: price,
-                            thumbnail: thumbnail,
-                            id: result.length + 1,
-                            timestamp: Date.now()
-                        };
-                        newData.push(payload);
-                        return [4 /*yield*/, fs_1.default.promises.writeFile(path_1.default.join(__dirname, "../db/".concat(this.name)), JSON.stringify(newData))];
+                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail;
+                        id = parseInt(req.params.id, 10);
+                        return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, id)];
                     case 2:
-                        _a.sent();
-                        return [2 /*return*/, payload];
+                        payload = _b.sent();
+                        res.send(payload);
+                        return [3 /*break*/, 4];
                     case 3:
-                        err_3 = _a.sent();
-                        logger_1.logger.info("[falla al guardar]", err_3);
-                        return [4 /*yield*/, fs_1.default.promises.writeFile("./static/".concat(this.name), "[]")];
-                    case 4:
-                        _a.sent();
-                        return [2 /*return*/, "archivo creado, vuelve a intentar\n"];
-                    case 5: return [2 /*return*/];
+                        error_3 = _b.sent();
+                        res.send(error_3);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
-        });
-    };
-    Producto.prototype.actualizarProducto = function (title, price, thumbnail, id) {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, result, oldData, payload, indiceProd, error_1;
+        }); };
+        this.destroy = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var id;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, fs_1.default.promises.readFile(path_1.default.join(__dirname, "../db/".concat(this.name)), "utf-8")];
+                    case 0: return [4 /*yield*/, req.params.id];
                     case 1:
-                        data = _a.sent();
-                        result = JSON.parse(data);
-                        oldData = __spreadArray([], result, true);
-                        payload = {
-                            title: title,
-                            price: price,
-                            thumbnail: thumbnail,
-                            id: id,
-                            timestamp: Date.now()
-                        };
-                        indiceProd = oldData.findIndex(function (prod) {
-                            return prod.id === id;
-                        });
-                        oldData[indiceProd] = payload;
-                        fs_1.default.promises.writeFile(path_1.default.join(__dirname, "../db/".concat(this.name)), JSON.stringify(oldData), "utf-8");
-                        return [2 /*return*/, payload];
+                        id = _a.sent();
+                        return [4 /*yield*/, producto.eliminarProducto(parseInt(id, 10))];
                     case 2:
-                        error_1 = _a.sent();
-                        logger_1.logger.info(error_1);
+                        _a.sent();
+                        res.sendStatus(204);
+                        return [2 /*return*/];
+                }
+            });
+        }); };
+        this.getById = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var id, result, error_4;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        id = (_a = req.params.id) !== null && _a !== void 0 ? _a : "0";
+                        return [4 /*yield*/, producto.mostrarProducto(parseInt(id, 10))];
+                    case 1:
+                        result = _b.sent();
+                        result !== undefined
+                            ? res.send(result)
+                            : res.send({ error: "producto no encontrado" });
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_4 = _b.sent();
+                        res.send(error_4);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
             });
-        });
-    };
-    Producto.prototype.eliminarProducto = function (id) {
-        return __awaiter(this, void 0, void 0, function () {
-            var data, result, oldData, indiceProd, err_4;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, fs_1.default.promises.readFile(path_1.default.join(__dirname, "../db/".concat(this.name)), "utf-8")];
-                    case 1:
-                        data = _a.sent();
-                        result = JSON.parse(data);
-                        oldData = __spreadArray([], result, true);
-                        indiceProd = oldData.findIndex(function (prod) {
-                            return prod.id === id;
-                        });
-                        oldData.splice(indiceProd, 1);
-                        fs_1.default.promises.writeFile(path_1.default.join(__dirname, "../db/".concat(this.name)), JSON.stringify(oldData), "utf-8");
-                        return [2 /*return*/, oldData];
-                    case 2:
-                        err_4 = _a.sent();
-                        return [2 /*return*/, logger_1.logger.info("[]")];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return Producto;
+        }); };
+    }
+    return ProductoController;
 }());
-exports.default = Producto;
+exports.default = ProductoController;
