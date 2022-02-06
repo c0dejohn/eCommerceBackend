@@ -1,7 +1,6 @@
 import { logger } from "../util/logger";
 import fs from "fs";
 import path from "path";
-import console from "console";
 
 class Producto {
 	name: string;
