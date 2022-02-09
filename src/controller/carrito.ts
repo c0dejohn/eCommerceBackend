@@ -1,11 +1,13 @@
 import Carrito from "../services/carrito";
-const producto = new Carrito("carrito.txt");
+import Producto from "../services/productos";
+const producto = new Producto("productos.txt");
+const carrito = new Carrito("carrito.txt");
 
 class CarritoController {
 	getById = async (req, res) => {
 		try {
 			const id = req.params.id ?? 0;
-			const result = await producto.mostrarProducto(parseInt(id, 10));
+			const result = await carrito.mostrarProducto(parseInt(id, 10));
 
 			result !== undefined
 				? res.send(result)
@@ -17,8 +19,24 @@ class CarritoController {
 
 	addProduct = async (req: any, res: any) => {
 		try {
-			const { id, title, price } = await req.body;
-			const result = await producto.agregarProducto(id, title, price);
+			const { title, price, thumbnail, quantity, id } = await req.body;
+			const data = await producto.mostrarProducto(id);
+			const newStock = data?.stock || 0;
+			const stock = (await newStock) - quantity;
+			await producto.actualizarProducto(
+				title,
+				price,
+				thumbnail,
+				parseInt(id, 10),
+				stock
+			);
+
+			const result = await carrito.agregarProducto(
+				title,
+				price,
+				thumbnail,
+				stock
+			);
 			result !== undefined ? res.status(201).send(result) : res.send(result);
 		} catch (error) {
 			res.send(error);
@@ -27,12 +45,13 @@ class CarritoController {
 
 	update = async (req: any, res: any) => {
 		try {
-			const { title, price, thumbnail } = await req.body;
+			const { title, price, thumbnail, stock } = await req.body;
 			const id = await req.params.id;
-			const payload = await producto.actualizarProducto(
+			const payload = await carrito.actualizarProducto(
 				title,
 				price,
 				thumbnail,
+				stock,
 				parseInt(id, 10)
 			);
 			res.sendStatus(200).json({ payload });
@@ -43,7 +62,7 @@ class CarritoController {
 
 	destroy = async (req: any, res: any) => {
 		const id = req.params.id;
-		producto.eliminarProducto(parseInt(id, 10));
+		carrito.eliminarProducto(parseInt(id, 10));
 		res.sendStatus(204);
 	};
 }

@@ -40,7 +40,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var carrito_1 = __importDefault(require("../services/carrito"));
-var producto = new carrito_1.default("carrito.txt");
+var productos_1 = __importDefault(require("../services/productos"));
+var producto = new productos_1.default("productos.txt");
+var carrito = new carrito_1.default("carrito.txt");
 var CarritoController = /** @class */ (function () {
     function CarritoController() {
         var _this = this;
@@ -52,7 +54,7 @@ var CarritoController = /** @class */ (function () {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
                         id = (_a = req.params.id) !== null && _a !== void 0 ? _a : 0;
-                        return [4 /*yield*/, producto.mostrarProducto(parseInt(id, 10))];
+                        return [4 /*yield*/, carrito.mostrarProducto(parseInt(id, 10))];
                     case 1:
                         result = _b.sent();
                         result !== undefined
@@ -68,40 +70,50 @@ var CarritoController = /** @class */ (function () {
             });
         }); };
         this.addProduct = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, id, title, price, result, error_2;
+            var _a, title, price, thumbnail, quantity, id, data, newStock, stock, add, result, error_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 3, , 4]);
+                        _b.trys.push([0, 6, , 7]);
                         return [4 /*yield*/, req.body];
                     case 1:
-                        _a = _b.sent(), id = _a.id, title = _a.title, price = _a.price;
-                        return [4 /*yield*/, producto.agregarProducto(id, title, price)];
+                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail, quantity = _a.quantity, id = _a.id;
+                        return [4 /*yield*/, producto.mostrarProducto(id)];
                     case 2:
+                        data = _b.sent();
+                        newStock = (data === null || data === void 0 ? void 0 : data.stock) || 0;
+                        return [4 /*yield*/, newStock];
+                    case 3:
+                        stock = (_b.sent()) - quantity;
+                        return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, parseInt(id, 10), stock)];
+                    case 4:
+                        add = _b.sent();
+                        return [4 /*yield*/, carrito.agregarProducto(title, price, thumbnail, stock)];
+                    case 5:
                         result = _b.sent();
                         result !== undefined ? res.status(201).send(result) : res.send(result);
-                        return [3 /*break*/, 4];
-                    case 3:
+                        return [3 /*break*/, 7];
+                    case 6:
                         error_2 = _b.sent();
                         res.send(error_2);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };
         this.update = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, title, price, thumbnail, id, payload, error_3;
+            var _a, title, price, thumbnail, stock, id, payload, error_3;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 4, , 5]);
                         return [4 /*yield*/, req.body];
                     case 1:
-                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail;
+                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail, stock = _a.stock;
                         return [4 /*yield*/, req.params.id];
                     case 2:
                         id = _b.sent();
-                        return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, parseInt(id, 10))];
+                        return [4 /*yield*/, carrito.actualizarProducto(title, price, thumbnail, stock, parseInt(id, 10))];
                     case 3:
                         payload = _b.sent();
                         res.sendStatus(200).json({ payload: payload });
@@ -118,7 +130,7 @@ var CarritoController = /** @class */ (function () {
             var id;
             return __generator(this, function (_a) {
                 id = req.params.id;
-                producto.eliminarProducto(parseInt(id, 10));
+                carrito.eliminarProducto(parseInt(id, 10));
                 res.sendStatus(204);
                 return [2 /*return*/];
             });

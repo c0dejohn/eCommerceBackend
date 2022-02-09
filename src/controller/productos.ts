@@ -15,8 +15,13 @@ class ProductoController {
 
 	create = async (req, res) => {
 		try {
-			const { title, price, thumbnail } = await req.body;
-			const result = await producto.agregarProducto(title, price, thumbnail);
+			const { title, price, thumbnail, stock } = await req.body;
+			const result = await producto.agregarProducto(
+				title,
+				price,
+				thumbnail,
+				stock
+			);
 			result !== undefined ? res.status(201).send(result) : res.send(null);
 		} catch (error) {
 			res.send(error);
@@ -25,12 +30,13 @@ class ProductoController {
 
 	update = async (req, res) => {
 		try {
-			const { title, price, thumbnail } = await req.body;
+			const { title, price, thumbnail, stock } = await req.body;
 			const id = parseInt(req.params.id, 10);
 			const payload = await producto.actualizarProducto(
 				title,
 				price,
 				thumbnail,
+				stock,
 				id
 			);
 			res.send(payload);
