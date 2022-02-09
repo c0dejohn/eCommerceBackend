@@ -42,7 +42,7 @@ class Producto {
 			return logger.info("[]");
 		}
 	}
-	async agregarProducto(title, price, thumbnail) {
+	async agregarProducto(title, price, thumbnail, stock) {
 		try {
 			let id: number;
 			const data = await fs.promises.readFile(
@@ -65,6 +65,7 @@ class Producto {
 				price,
 				thumbnail,
 				id,
+				stock,
 				timestamp: Date.now()
 			};
 			newData.push(payload);
@@ -84,7 +85,8 @@ class Producto {
 		title: string,
 		price: number,
 		thumbnail: string,
-		id: number
+		id: number,
+		stock: number
 	) {
 		try {
 			const data = await fs.promises.readFile(
@@ -98,6 +100,7 @@ class Producto {
 				price,
 				thumbnail,
 				id,
+				stock,
 				timestamp: Date.now()
 			};
 

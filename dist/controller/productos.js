@@ -66,15 +66,15 @@ var ProductoController = /** @class */ (function () {
             });
         }); };
         this.create = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, title, price, thumbnail, result, error_2;
+            var _a, title, price, thumbnail, stock, result, error_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, req.body];
                     case 1:
-                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail;
-                        return [4 /*yield*/, producto.agregarProducto(title, price, thumbnail)];
+                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail, stock = _a.stock;
+                        return [4 /*yield*/, producto.agregarProducto(title, price, thumbnail, stock)];
                     case 2:
                         result = _b.sent();
                         result !== undefined ? res.status(201).send(result) : res.send(null);
@@ -88,16 +88,16 @@ var ProductoController = /** @class */ (function () {
             });
         }); };
         this.update = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, title, price, thumbnail, id, payload, error_3;
+            var _a, title, price, thumbnail, stock, id, payload, error_3;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 3, , 4]);
                         return [4 /*yield*/, req.body];
                     case 1:
-                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail;
+                        _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail, stock = _a.stock;
                         id = parseInt(req.params.id, 10);
-                        return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, id)];
+                        return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, stock, id)];
                     case 2:
                         payload = _b.sent();
                         res.send(payload);
