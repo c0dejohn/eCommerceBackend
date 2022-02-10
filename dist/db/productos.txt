@@ -1,1 +1,1 @@
-[{"title":"producto.title","price":100,"thumbnail":"producto.url","id":4,"stock":2,"timestamp":1644378055480}]
+[{"title":"producto.title","price":100,"thumbnail":"producto.url","id":1,"stock":-3,"timestamp":1644523416497}]

@@ -1,3 +1,4 @@
+import { error } from "console";
 import Carrito from "../services/carrito";
 import Producto from "../services/productos";
 const producto = new Producto("productos.txt");
@@ -17,12 +18,15 @@ class CarritoController {
 		}
 	};
 
-	addProduct = async (req: any, res: any) => {
+	addProduct = async (req, res) => {
 		try {
 			const { title, price, thumbnail, quantity, id } = await req.body;
 			const data = await producto.mostrarProducto(id);
 			const newStock = data?.stock || 0;
-			const stock = (await newStock) - quantity;
+			if (newStock < 1) {
+				throw error({ error: "No hay stock disponible" });
+			}
+			const stock = newStock - quantity;
 			await producto.actualizarProducto(
 				title,
 				price,
@@ -43,7 +47,7 @@ class CarritoController {
 		}
 	};
 
-	update = async (req: any, res: any) => {
+	update = async (req, res) => {
 		try {
 			const { title, price, thumbnail, stock } = await req.body;
 			const id = await req.params.id;
@@ -60,7 +64,7 @@ class CarritoController {
 		}
 	};
 
-	destroy = async (req: any, res: any) => {
+	destroy = async (req, res) => {
 		const id = req.params.id;
 		carrito.eliminarProducto(parseInt(id, 10));
 		res.sendStatus(204);

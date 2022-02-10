@@ -39,6 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var console_1 = require("console");
 var carrito_1 = __importDefault(require("../services/carrito"));
 var productos_1 = __importDefault(require("../services/productos"));
 var producto = new productos_1.default("productos.txt");
@@ -70,11 +71,11 @@ var CarritoController = /** @class */ (function () {
             });
         }); };
         this.addProduct = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-            var _a, title, price, thumbnail, quantity, id, data, newStock, stock, add, result, error_2;
+            var _a, title, price, thumbnail, quantity, id, data, newStock, stock, result, error_2;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 6, , 7]);
+                        _b.trys.push([0, 5, , 6]);
                         return [4 /*yield*/, req.body];
                     case 1:
                         _a = _b.sent(), title = _a.title, price = _a.price, thumbnail = _a.thumbnail, quantity = _a.quantity, id = _a.id;
@@ -82,22 +83,23 @@ var CarritoController = /** @class */ (function () {
                     case 2:
                         data = _b.sent();
                         newStock = (data === null || data === void 0 ? void 0 : data.stock) || 0;
-                        return [4 /*yield*/, newStock];
-                    case 3:
-                        stock = (_b.sent()) - quantity;
+                        if (newStock < 1) {
+                            throw (0, console_1.error)({ error: "No hay stock disponible" });
+                        }
+                        stock = newStock - quantity;
                         return [4 /*yield*/, producto.actualizarProducto(title, price, thumbnail, parseInt(id, 10), stock)];
-                    case 4:
-                        add = _b.sent();
+                    case 3:
+                        _b.sent();
                         return [4 /*yield*/, carrito.agregarProducto(title, price, thumbnail, stock)];
-                    case 5:
+                    case 4:
                         result = _b.sent();
                         result !== undefined ? res.status(201).send(result) : res.send(result);
-                        return [3 /*break*/, 7];
-                    case 6:
+                        return [3 /*break*/, 6];
+                    case 5:
                         error_2 = _b.sent();
                         res.send(error_2);
-                        return [3 /*break*/, 7];
-                    case 7: return [2 /*return*/];
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
                 }
             });
         }); };
